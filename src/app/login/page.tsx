@@ -1,13 +1,25 @@
 "use client";
-import React from "react";
+import React,{useState} from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 import styles from "./login.module.scss";
 import Link from "next/link";
+import {signIn} from "next-auth/react";
+import {useRouter} from "next/navigation"; 
 
 const Login: React.FC = () => {
-  const onFinish = (values: any) => {
+  const [error, setError] = useState("");
+  const router= useRouter();
+  const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);
+    const res = await signIn("credentials", {
+      email:values.username,
+      password:values.password,
+      redirect: false,
+    })
+    if(res?.error) return setError(res.error);
+    router.replace("/")
+
   };
 
   return (
